@@ -2,29 +2,7 @@ import type { Donation, Invoice, InvoiceStatus } from "./types";
 import { format } from "date-fns";
 
 // --- In-memory mock database ---
-let mockDonations: Donation[] = [
-  {
-    id: "3",
-    donor_name: "Satoshi",
-    amount_sats: 5000,
-    status: "PAID",
-    paid_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-  },
-  {
-    id: "2",
-    donor_name: "Hal Finney",
-    amount_sats: 1000,
-    status: "PAID",
-    paid_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-  },
-  {
-    id: "1",
-    donor_name: "Anonymous",
-    amount_sats: 2100,
-    status: "PAID",
-    paid_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-  },
-];
+let mockDonations: Donation[] = [];
 
 let pendingInvoice: Invoice | null = null;
 let pollCount = 0;
@@ -35,7 +13,8 @@ const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export async function createInvoice(
   amount_sats: number,
-  donor_name: string = "Anonymous"
+  donor_name: string = "Anonymous",
+  recipient?: string
 ): Promise<Invoice> {
   await delay(1000); // Simulate network latency
 
@@ -50,6 +29,7 @@ export async function createInvoice(
     payment_hash,
     expires_in: 3600,
     donor_name,
+    recipient,
     amount_sats,
   };
 
@@ -77,6 +57,7 @@ export async function getInvoiceStatus(
     const newDonation: Donation = {
       id: `${mockDonations.length + 1}`,
       donor_name: pendingInvoice.donor_name || "Anonymous",
+      recipient: pendingInvoice.recipient,
       amount_sats: pendingInvoice.amount_sats,
       status: "PAID",
       paid_at,

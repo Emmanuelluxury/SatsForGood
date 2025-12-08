@@ -19,6 +19,7 @@ import { BitcoinIcon, Loader2, Zap } from "@/components/icons";
 
 const formSchema = z.object({
   name: z.string().optional(),
+  recipient: z.string().optional(),
   amount: z.coerce
     .number({ invalid_type_error: "Please enter a number." })
     .min(1, { message: "Donation must be at least 1 sat." })
@@ -26,7 +27,7 @@ const formSchema = z.object({
 });
 
 interface DonateFormProps {
-  onCreateInvoice: (amount: number, name?: string) => Promise<void>;
+  onCreateInvoice: (amount: number, name?: string, recipient?: string) => Promise<void>;
   isSubmitting: boolean;
 }
 
@@ -35,21 +36,25 @@ export function DonateForm({ onCreateInvoice, isSubmitting }: DonateFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      recipient: "",
       amount: 1000,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    onCreateInvoice(values.amount, values.name);
+    onCreateInvoice(values.amount, values.name, values.recipient);
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline">
-          <Zap className="h-6 w-6 text-primary" />
-          Create Your Donation
+    <Card className="shadow-lg border-2 border-primary/10 bg-gradient-to-br from-background to-muted/20">
+      <CardHeader className="text-center">
+        <CardTitle className="flex items-center justify-center gap-2 font-headline text-2xl">
+          <Zap className="h-7 w-7 text-primary" />
+          Make a Donation
         </CardTitle>
+        <p className="text-muted-foreground mt-2">
+          Support our cause with Bitcoin Lightning. Every sat counts!
+        </p>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -61,7 +66,20 @@ export function DonateForm({ onCreateInvoice, isSubmitting }: DonateFormProps) {
                 <FormItem>
                   <FormLabel>Your Name (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Satoshi Nakamoto" {...field} />
+                    <Input placeholder="Satoshi Nakamoto" className="h-11" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="recipient"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Recipient (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Charity Name or Cause" className="h-11" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -73,9 +91,23 @@ export function DonateForm({ onCreateInvoice, isSubmitting }: DonateFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
+                      <Button
+                        key={amount}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => field.onChange(amount)}
+                        className="text-xs"
+                      >
+                        {amount.toLocaleString()} sats
+                      </Button>
+                    ))}
+                  </div>
                   <FormControl>
                     <div className="relative">
-                      <Input type="number" placeholder="1000" {...field} className="pl-8"/>
+                      <Input type="number" placeholder="1000" {...field} className="pl-8 h-11"/>
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
                         <BitcoinIcon className="h-4 w-4" />
                       </span>
@@ -85,16 +117,22 @@ export function DonateForm({ onCreateInvoice, isSubmitting }: DonateFormProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Generating Invoice...
                 </>
               ) : (
-                "Generate Invoice"
+                <>
+                  <Zap className="mr-2 h-5 w-5" />
+                  Donate Now
+                </>
               )}
             </Button>
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              🔒 Secure Lightning Network payment • No fees • Instant confirmation
+            </p>
           </form>
         </Form>
       </CardContent>

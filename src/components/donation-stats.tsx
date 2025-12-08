@@ -9,35 +9,39 @@ interface DonationStatsProps {
 export function DonationStats({ totalSats, donorCount }: DonationStatsProps) {
   return (
     <div>
-        <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl mb-8">
-            Dashboard
+        <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl mb-8 text-center">
+            Impact Dashboard
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Sats Donated</CardTitle>
-                <BitcoinIcon className="h-4 w-4 text-muted-foreground" />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <Card className="shadow-lg border-2 border-primary/10 bg-gradient-to-br from-background to-muted/20 hover:shadow-xl transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-lg font-semibold text-primary">Total Sats Donated</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <BitcoinIcon className="h-6 w-6 text-primary" />
+                </div>
                 </CardHeader>
                 <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-4xl font-bold mb-2">
                     {totalSats.toLocaleString()}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                    Making a big impact
+                <p className="text-sm text-muted-foreground">
+                    Making a big impact together
                 </p>
                 </CardContent>
             </Card>
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Donors</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+            <Card className="shadow-lg border-2 border-primary/10 bg-gradient-to-br from-background to-muted/20 hover:shadow-xl transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-lg font-semibold text-primary">Total Donors</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
                 </CardHeader>
                 <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-4xl font-bold mb-2">
                     {donorCount.toLocaleString()}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                    Thank you for your support!
+                <p className="text-sm text-muted-foreground">
+                    Amazing community support!
                 </p>
                 </CardContent>
             </Card>

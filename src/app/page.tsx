@@ -39,10 +39,10 @@ export default function Home() {
     fetchDashboardData();
   }, []);
 
-  const handleCreateInvoice = async (amount: number, name?: string) => {
+  const handleCreateInvoice = async (amount: number, name?: string, recipient?: string) => {
     setIsCreatingInvoice(true);
     try {
-      const newInvoice = await createInvoice(amount, name);
+      const newInvoice = await createInvoice(amount, name, recipient);
       setInvoice(newInvoice);
       setView("invoice");
     } catch (error) {

@@ -1,25 +1,25 @@
 {
   "pages": {
     "/page": [
-      "static/chunks/69235_next_dist_4bb268ee._.js",
-      "static/chunks/Documents_lightning_network_frontend_src_app_favicon_ico_mjs_fbefc1dd._.js",
-      "static/chunks/Documents_lightning_network_frontend_src_app_globals_9cdee964.css",
-      "static/chunks/69235_9862d18f._.js",
-      "static/chunks/Documents_lightning_network_frontend_src_45e3a4fc._.js",
-      "static/chunks/Documents_lightning_network_frontend_src_app_layout_tsx_1c57c165._.js",
-      "static/chunks/69235_next_dist_client_components_builtin_global-error_a99c45be.js",
-      "static/chunks/Documents_lightning_network_frontend_src_96f0927b._.js",
-      "static/chunks/69235_1ae534c0._.js",
-      "static/chunks/Documents_lightning_network_frontend_src_app_page_tsx_a99c45be._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_213f3bcc._.js",
-      "static/chunks/69235_next_dist_compiled_react-dom_bd2698d3._.js",
-      "static/chunks/69235_next_dist_compiled_next-devtools_index_522ae408.js",
-      "static/chunks/69235_next_dist_compiled_ede738e9._.js",
-      "static/chunks/69235_next_dist_client_d05d4ba0._.js",
-      "static/chunks/69235_next_dist_d6c02515._.js",
-      "static/chunks/69235_@swc_helpers_cjs_5dd74306._.js",
-      "static/chunks/Documents_lightning_network_frontend_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_lightning_network_frontend_b60aa11b._.js"
+      "static/chunks/366f6_next_dist_f4821f33._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_app_favicon_ico_mjs_58804fbe._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_app_globals_22b5b9d0.css",
+      "static/chunks/366f6_99f415e7._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_a376c097._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_app_layout_tsx_8ebd8765._.js",
+      "static/chunks/366f6_next_dist_client_components_builtin_global-error_e0934c3e.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_ec50f2da._.js",
+      "static/chunks/366f6_d7f46769._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_src_app_page_tsx_e0934c3e._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_b02ae189._.js",
+      "static/chunks/366f6_next_dist_compiled_react-dom_fa7d5f8c._.js",
+      "static/chunks/366f6_next_dist_compiled_next-devtools_index_670a5502.js",
+      "static/chunks/366f6_next_dist_compiled_5c9b7379._.js",
+      "static/chunks/366f6_next_dist_client_27aa3fd4._.js",
+      "static/chunks/366f6_next_dist_0ef9657b._.js",
+      "static/chunks/366f6_@swc_helpers_cjs_fc61ea96._.js",
+      "static/chunks/Documents_SatsForGood_SatsForGood_a0ff3932._.js",
+      "static/chunks/turbopack-Documents_SatsForGood_SatsForGood_de821f08._.js"
     ]
   }
 }

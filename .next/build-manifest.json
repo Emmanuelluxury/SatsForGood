@@ -5,22 +5,22 @@
   "devFiles": [],
   "ampDevFiles": [],
   "polyfillFiles": [
-    "static/chunks/69235_next_dist_build_polyfills_polyfill-nomodule.js"
+    "static/chunks/366f6_next_dist_build_polyfills_polyfill-nomodule.js"
   ],
   "lowPriorityFiles": [
     "static/development/_ssgManifest.js",
     "static/development/_buildManifest.js"
   ],
   "rootMainFiles": [
-    "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_213f3bcc._.js",
-    "static/chunks/69235_next_dist_compiled_react-dom_bd2698d3._.js",
-    "static/chunks/69235_next_dist_compiled_next-devtools_index_522ae408.js",
-    "static/chunks/69235_next_dist_compiled_ede738e9._.js",
-    "static/chunks/69235_next_dist_client_d05d4ba0._.js",
-    "static/chunks/69235_next_dist_d6c02515._.js",
-    "static/chunks/69235_@swc_helpers_cjs_5dd74306._.js",
-    "static/chunks/Documents_lightning_network_frontend_a0ff3932._.js",
-    "static/chunks/turbopack-Documents_lightning_network_frontend_b60aa11b._.js"
+    "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_b02ae189._.js",
+    "static/chunks/366f6_next_dist_compiled_react-dom_fa7d5f8c._.js",
+    "static/chunks/366f6_next_dist_compiled_next-devtools_index_670a5502.js",
+    "static/chunks/366f6_next_dist_compiled_5c9b7379._.js",
+    "static/chunks/366f6_next_dist_client_27aa3fd4._.js",
+    "static/chunks/366f6_next_dist_0ef9657b._.js",
+    "static/chunks/366f6_@swc_helpers_cjs_fc61ea96._.js",
+    "static/chunks/Documents_SatsForGood_SatsForGood_a0ff3932._.js",
+    "static/chunks/turbopack-Documents_SatsForGood_SatsForGood_de821f08._.js"
   ],
   "ampFirstPages": []
 }

@@ -3,6 +3,7 @@ export interface Invoice {
   payment_hash: string;
   expires_in: number;
   donor_name?: string;
+  recipient?: string;
   amount_sats: number;
 }
 
@@ -14,6 +15,7 @@ export interface InvoiceStatus {
 export interface Donation {
   id: string;
   donor_name: string;
+  recipient?: string;
   amount_sats: number;
   status: "PAID";
   paid_at: string;

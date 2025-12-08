@@ -19,18 +19,21 @@ interface RecentDonationsProps {
 
 export function RecentDonations({ donations }: RecentDonationsProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Donations</CardTitle>
+    <Card className="shadow-lg border-2 border-primary/10 bg-gradient-to-br from-background to-muted/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl font-semibold text-primary">Recent Donations</CardTitle>
+        <p className="text-sm text-muted-foreground">See how others are contributing</p>
       </CardHeader>
       <CardContent>
         {donations.length > 0 ? (
-          <Table>
-            <TableHeader>
+          <div className="rounded-lg border border-border/50 overflow-hidden">
+            <Table>
+            <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead>Donor</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="hidden sm:table-cell text-right">Date</TableHead>
+                <TableHead className="font-semibold">Donor</TableHead>
+                <TableHead className="font-semibold">Recipient</TableHead>
+                <TableHead className="text-right font-semibold">Amount</TableHead>
+                <TableHead className="hidden sm:table-cell text-right font-semibold">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -46,6 +49,9 @@ export function RecentDonations({ donations }: RecentDonationsProps) {
                       <span className="font-medium">{donation.donor_name}</span>
                     </div>
                   </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {donation.recipient || "General Fund"}
+                  </TableCell>
                   <TableCell className="text-right font-mono flex justify-end items-center gap-1">
                     {donation.amount_sats.toLocaleString()}
                     <BitcoinIcon className="h-3 w-3 text-primary" />
@@ -57,9 +63,12 @@ export function RecentDonations({ donations }: RecentDonationsProps) {
               ))}
             </TableBody>
           </Table>
+          </div>
         ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            No donations yet. Be the first!
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🎉</div>
+            <h3 className="text-lg font-semibold mb-2">No donations yet</h3>
+            <p className="text-muted-foreground">Be the first to make a difference!</p>
           </div>
         )}
       </CardContent>
