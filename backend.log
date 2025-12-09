@@ -1,0 +1,7 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+warning: the following packages contain code that will be rejected by a future version of Rust: lightning v0.0.118
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running `target/debug/lightning-donation-backend`
+🚀 Lightning Donation Backend listening on http://0.0.0.0:3001
+🔗 Created Lightning invoice: 1000 sats to SatsForGood (payment_hash: 83074add0a080d49e7a75fbcd01be83686abb8cad61ab1429f9a9269fc77f973)
+🔗 Created Lightning invoice: 50000 sats to tb1qzy3sqsf3fm5r4gh2qmcqf229uw9uruwthrcgca (payment_hash: 06de53a3b606f68cd474a1025beda90d8f0946bcaae5b7d8d9000229eb94ae83)
