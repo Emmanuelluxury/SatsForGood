@@ -31,7 +31,6 @@ export function RecentDonations({ donations }: RecentDonationsProps) {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="font-semibold">Donor</TableHead>
-                <TableHead className="font-semibold">Recipient</TableHead>
                 <TableHead className="text-right font-semibold">Amount</TableHead>
                 <TableHead className="hidden sm:table-cell text-right font-semibold">Date</TableHead>
               </TableRow>
@@ -48,9 +47,6 @@ export function RecentDonations({ donations }: RecentDonationsProps) {
                       </Avatar>
                       <span className="font-medium">{donation.donor_name}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {donation.recipient || "General Fund"}
                   </TableCell>
                   <TableCell className="text-right font-mono flex justify-end items-center gap-1">
                     {donation.amount_sats.toLocaleString()}

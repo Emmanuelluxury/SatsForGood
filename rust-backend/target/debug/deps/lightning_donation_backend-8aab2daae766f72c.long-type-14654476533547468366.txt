@@ -1,0 +1,1 @@
+impl std::future::Future<Output = Result<Json<CreateInvoiceResponse>, axum::http::StatusCode>>

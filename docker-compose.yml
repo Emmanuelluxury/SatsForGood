@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  rust-backend:
+    build: ./rust-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - RUST_LOG=info
+    restart: unless-stopped
+
+  nextjs-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_RUST_BACKEND_URL=http://rust-backend:3001
+    depends_on:
+      - rust-backend
+    restart: unless-stopped

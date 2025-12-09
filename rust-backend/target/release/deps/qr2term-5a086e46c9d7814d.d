@@ -1,0 +1,11 @@
+/home/blackghost/Documents/SatsForGood/SatsForGood/rust-backend/target/release/deps/qr2term-5a086e46c9d7814d.d: /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/lib.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/matrix.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/qr.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/render.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/util.rs
+
+/home/blackghost/Documents/SatsForGood/SatsForGood/rust-backend/target/release/deps/libqr2term-5a086e46c9d7814d.rlib: /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/lib.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/matrix.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/qr.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/render.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/util.rs
+
+/home/blackghost/Documents/SatsForGood/SatsForGood/rust-backend/target/release/deps/libqr2term-5a086e46c9d7814d.rmeta: /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/lib.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/matrix.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/qr.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/render.rs /home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/util.rs
+
+/home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/lib.rs:
+/home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/matrix.rs:
+/home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/qr.rs:
+/home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/render.rs:
+/home/blackghost/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/qr2term-0.3.3/src/util.rs:

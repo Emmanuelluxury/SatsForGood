@@ -5,10 +5,11 @@ export interface Invoice {
   donor_name?: string;
   recipient?: string;
   amount_sats: number;
+  qr_code?: string;
 }
 
 export interface InvoiceStatus {
-  status: "PENDING" | "PAID";
+  status: "PENDING" | "PAID" | "EXPIRED";
   paid_at?: string;
 }
 

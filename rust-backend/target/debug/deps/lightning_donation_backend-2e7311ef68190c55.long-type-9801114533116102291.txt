@@ -1,0 +1,2 @@
+fn(Query<CreateInvoiceRequest>, axum::extract::State<AppState>) -> impl std::future::Future<Output = Result<Json<CreateInvoiceResponse>, axum::http::StatusCode>> {create_invoice}
+fn(Query<CreateInvoiceRequest>, axum::extract::State<AppState>) -> impl std::future::Future<Output = Result<Json<CreateInvoiceResponse>, axum::http::StatusCode>> {create_invoice}: Handler<_, _>

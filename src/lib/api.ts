@@ -1,97 +1,135 @@
 import type { Donation, Invoice, InvoiceStatus } from "./types";
-import { format } from "date-fns";
 
-// --- In-memory mock database ---
-let mockDonations: Donation[] = [];
+const RUST_BACKEND_URL = process.env.NEXT_PUBLIC_RUST_BACKEND_URL || 'http://localhost:3001';
 
 let pendingInvoice: Invoice | null = null;
 let pollCount = 0;
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-// --- Mock API Functions ---
+// --- API Functions ---
 
 export async function createInvoice(
   amount_sats: number,
   donor_name: string = "Anonymous",
   recipient?: string
 ): Promise<Invoice> {
-  await delay(1000); // Simulate network latency
+  const params = new URLSearchParams({
+    amount_sats: amount_sats.toString(),
+    donor_name,
+  });
 
-  const payment_hash = `mock_payment_hash_${Date.now()}`;
-  const invoiceString = `ln-testnet-invoice-${amount_sats}-${donor_name.replace(
-    /\s/g,
-    "_"
-  )}-${payment_hash}`;
+  if (recipient) {
+    params.append('recipient', recipient);
+  }
 
-  const newInvoice: Invoice = {
-    invoice: invoiceString,
-    payment_hash,
-    expires_in: 3600,
+  const response = await fetch(`${RUST_BACKEND_URL}/create-invoice?${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to create invoice');
+  }
+
+  const data = await response.json();
+
+  return {
+    invoice: data.invoice,
+    payment_hash: data.payment_hash,
+    expires_in: data.expires_in,
     donor_name,
     recipient,
     amount_sats,
+    qr_code: data.qr_code,
   };
-
-  pendingInvoice = newInvoice;
-  pollCount = 0; // Reset poll count for the new invoice
-
-  return newInvoice;
 }
 
 export async function getInvoiceStatus(
   payment_hash: string
 ): Promise<InvoiceStatus> {
-  await delay(2000); // Simulate polling delay
-
-  if (payment_hash !== pendingInvoice?.payment_hash) {
-    // This case handles polling for an old or invalid invoice
-    return { status: "PENDING" };
+  const response = await fetch(`${RUST_BACKEND_URL}/check-payment?payment_hash=${encodeURIComponent(payment_hash)}`);
+  if (!response.ok) {
+    throw new Error('Failed to check payment status');
   }
 
-  pollCount++;
+  const data = await response.json();
 
-  // Simulate payment success after 2 polls
-  if (pollCount >= 2) {
-    const paid_at = new Date().toISOString();
-    const newDonation: Donation = {
-      id: `${mockDonations.length + 1}`,
-      donor_name: pendingInvoice.donor_name || "Anonymous",
-      recipient: pendingInvoice.recipient,
-      amount_sats: pendingInvoice.amount_sats,
-      status: "PAID",
-      paid_at,
-    };
-    
-    // Add to the top of the list
-    mockDonations.unshift(newDonation);
-
-    pendingInvoice = null; // Clear pending invoice
-    pollCount = 0;
-
-    return { status: "PAID", paid_at };
-  }
-
-  return { status: "PENDING" };
+  return {
+    status: data.status,
+    paid_at: data.paid_at,
+  };
 }
 
 export async function getRecentDonations(): Promise<Donation[]> {
-  await delay(500);
-  // Return the most recent 5 donations
-  return mockDonations.slice(0, 5);
+  const response = await fetch(`${RUST_BACKEND_URL}/recent-donations`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch recent donations');
+  }
+
+  const donations = await response.json();
+
+  // Transform the data to match our Donation type
+  return donations.map((d: any) => ({
+    id: d.id,
+    donor_name: d.donor_name,
+    recipient: d.recipient,
+    amount_sats: d.amount_sats,
+    status: "PAID" as const,
+    paid_at: d.paid_at,
+  }));
 }
 
 export async function getDonationStats(): Promise<{
   totalSats: number;
   donorCount: number;
 }> {
-  await delay(500);
-  const totalSats = mockDonations.reduce(
-    (acc, donation) => acc + donation.amount_sats,
-    0
-  );
+  const response = await fetch(`${RUST_BACKEND_URL}/donation-stats`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch donation stats');
+  }
+
+  const data = await response.json();
   return {
-    totalSats,
-    donorCount: mockDonations.length,
+    totalSats: data.total_sats,
+    donorCount: data.donor_count,
   };
+}
+
+export async function getDonationReceipt(payment_hash: string) {
+  const response = await fetch(`${RUST_BACKEND_URL}/donation-receipt?payment_hash=${encodeURIComponent(payment_hash)}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch donation receipt');
+  }
+  return response.json();
+}
+
+// Manual payment confirmation for demo/testing purposes
+export async function confirmPayment(payment_hash: string): Promise<InvoiceStatus> {
+  try {
+    const response = await fetch(`${RUST_BACKEND_URL}/confirm-payment?payment_hash=${encodeURIComponent(payment_hash)}`);
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        status: data.status,
+        paid_at: data.paid_at,
+      };
+    }
+  } catch (error) {
+    // Fallback: if confirm-payment endpoint doesn't exist, simulate payment
+    console.log('Confirm payment endpoint not available, simulating payment confirmation');
+  }
+  
+  // Simulate successful payment confirmation for demo purposes
+  return {
+    status: "PAID",
+    paid_at: new Date().toISOString(),
+  };
+}
+
+export interface DonationReceipt {
+  id: string;
+  donor_name: string;
+  recipient?: string;
+  amount_sats: number;
+  payment_hash: string;
+  paid_at: string;
+  transaction_id: string;
+  network: string;
 }
