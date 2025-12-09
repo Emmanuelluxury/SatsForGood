@@ -877,8 +877,6 @@ function DonateForm({ onCreateInvoice, isSubmitting }) {
 "use strict";
 
 __turbopack_context__.s([
-    "confirmPayment",
-    ()=>confirmPayment,
     "createInvoice",
     ()=>createInvoice,
     "getDonationReceipt",
@@ -962,26 +960,6 @@ async function getDonationReceipt(payment_hash) {
     }
     return response.json();
 }
-async function confirmPayment(payment_hash) {
-    try {
-        const response = await fetch(`${RUST_BACKEND_URL}/confirm-payment?payment_hash=${encodeURIComponent(payment_hash)}`);
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                status: data.status,
-                paid_at: data.paid_at
-            };
-        }
-    } catch (error) {
-        // Fallback: if confirm-payment endpoint doesn't exist, simulate payment
-        console.log('Confirm payment endpoint not available, simulating payment confirmation');
-    }
-    // Simulate successful payment confirmation for demo purposes
-    return {
-        status: "PAID",
-        paid_at: new Date().toISOString()
-    };
-}
 }),
 "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -1046,13 +1024,27 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
         isPolling
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (timeRemaining <= 0) return;
+        if (timeRemaining <= 0) {
+            // Auto-expire when countdown reaches zero
+            if (status === "PENDING") {
+                setStatus("EXPIRED");
+                setIsPolling(false);
+                toast({
+                    title: "Invoice Expired",
+                    description: "This donation invoice has expired. Please create a new one.",
+                    variant: "destructive"
+                });
+            }
+            return;
+        }
         const timer = setInterval(()=>{
             setTimeRemaining((prev)=>Math.max(0, prev - 1));
         }, 1000);
         return ()=>clearInterval(timer);
     }, [
-        timeRemaining
+        timeRemaining,
+        status,
+        toast
     ]);
     const formatTime = (seconds)=>{
         const mins = Math.floor(seconds / 60);
@@ -1081,12 +1073,12 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                 onClick: onBack,
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$left$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowLeft$3e$__["ArrowLeft"], {}, void 0, false, {
                     fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                    lineNumber: 83,
+                    lineNumber: 95,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                lineNumber: 82,
+                lineNumber: 94,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
@@ -1098,14 +1090,14 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                 className: "h-6 w-6 text-primary"
                             }, void 0, false, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 88,
+                                lineNumber: 100,
                                 columnNumber: 13
                             }, this),
-                            "Scan QR Code to Donate"
+                            "Lightning Donation"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 87,
+                        lineNumber: 99,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1113,13 +1105,13 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                         children: "Use your Lightning wallet to scan this QR code and complete the donation"
                     }, void 0, false, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 91,
+                        lineNumber: 103,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                lineNumber: 86,
+                lineNumber: 98,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1135,7 +1127,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                             className: "rounded"
                         }, void 0, false, {
                             fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                            lineNumber: 100,
+                            lineNumber: 112,
                             columnNumber: 17
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                             src: qrCodeUrl,
@@ -1145,12 +1137,12 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                             priority: true
                         }, void 0, false, {
                             fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                            lineNumber: 108,
+                            lineNumber: 120,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 98,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1164,7 +1156,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 120,
+                                lineNumber: 132,
                                 columnNumber: 11
                             }, this),
                             invoice.recipient && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1175,40 +1167,48 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 124,
+                                lineNumber: 136,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 119,
+                        lineNumber: 131,
                         columnNumber: 9
                     }, this),
                     status === "PENDING" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-2 text-amber-600",
+                        className: `flex items-center gap-2 ${timeRemaining <= 300 ? 'text-red-600' : timeRemaining <= 900 ? 'text-amber-600' : 'text-green-600'}`,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$clock$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Clock$3e$__["Clock"], {
                                 className: "h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 133,
+                                lineNumber: 149,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: "text-sm font-medium",
                                 children: [
                                     "Expires in ",
-                                    formatTime(timeRemaining)
+                                    formatTime(timeRemaining),
+                                    timeRemaining <= 300 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "block text-xs mt-1 animate-pulse",
+                                        children: "⚠️ Hurry! Time running out"
+                                    }, void 0, false, {
+                                        fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
+                                        lineNumber: 153,
+                                        columnNumber: 17
+                                    }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 134,
+                                lineNumber: 150,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 132,
+                        lineNumber: 144,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1219,7 +1219,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                 children: "How to Pay"
                             }, void 0, false, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 142,
+                                lineNumber: 163,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1229,27 +1229,35 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                         children: "1. Open your Lightning wallet app"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 144,
+                                        lineNumber: 166,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        children: "2. Scan this QR code or copy the invoice"
+                                        children: "2. Scan this QR code or copy the invoice below"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 167,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        children: "3. Confirm the payment"
+                                        children: "3. Confirm the payment in your wallet"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 146,
+                                        lineNumber: 168,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-xs text-muted-foreground mt-3",
+                                        children: "Payment will be detected automatically once confirmed on the Lightning Network"
+                                    }, void 0, false, {
+                                        fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
+                                        lineNumber: 169,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 143,
+                                lineNumber: 165,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1261,20 +1269,20 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                         className: "h-5 w-5 mr-2"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 155,
+                                        lineNumber: 180,
                                         columnNumber: 13
                                     }, this),
                                     "Open in Lightning Wallet"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 150,
+                                lineNumber: 175,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 141,
+                        lineNumber: 162,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1285,7 +1293,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                 children: "Invoice (LNBC...)"
                             }, void 0, false, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 162,
+                                lineNumber: 187,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1298,7 +1306,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                         placeholder: "lnbc..."
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 164,
+                                        lineNumber: 189,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1310,24 +1318,24 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                            lineNumber: 176,
+                                            lineNumber: 201,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 170,
+                                        lineNumber: 195,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 163,
+                                lineNumber: 188,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 161,
+                        lineNumber: 186,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1340,29 +1348,29 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                         className: "h-5 w-5 animate-spin"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 185,
+                                        lineNumber: 210,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "font-semibold",
-                                        children: "Waiting for payment..."
+                                        children: "Waiting for Lightning payment..."
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 186,
+                                        lineNumber: 211,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "text-sm text-muted-foreground",
-                                        children: "(Check your wallet)"
+                                        children: "(Scan QR code with your wallet)"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 187,
+                                        lineNumber: 212,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 184,
+                                lineNumber: 209,
                                 columnNumber: 13
                             }, this),
                             status === "PAID" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1375,7 +1383,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                                 className: "h-5 w-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                                lineNumber: 194,
+                                                lineNumber: 219,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1383,13 +1391,13 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                                 children: "Payment Successful!"
                                             }, void 0, false, {
                                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                                lineNumber: 195,
+                                                lineNumber: 220,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 193,
+                                        lineNumber: 218,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1397,17 +1405,17 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                         children: "Thank you for your donation! 🎉"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 197,
+                                        lineNumber: 222,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 192,
+                                lineNumber: 217,
                                 columnNumber: 13
                             }, this),
                             status === "EXPIRED" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "space-y-2",
+                                className: "space-y-4",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "flex items-center justify-center gap-2 text-red-500",
@@ -1416,7 +1424,7 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                                 className: "h-5 w-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                                lineNumber: 206,
+                                                lineNumber: 231,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1424,39 +1432,66 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                                                 children: "Invoice Expired"
                                             }, void 0, false, {
                                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                                lineNumber: 207,
+                                                lineNumber: 232,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 205,
+                                        lineNumber: 230,
                                         columnNumber: 15
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                        className: "text-sm text-muted-foreground",
-                                        children: "Please create a new donation invoice."
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "bg-red-50 border border-red-200 rounded-lg p-4",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "text-sm text-red-700 text-center",
+                                                children: "⏰ This Lightning invoice has expired and can no longer be paid."
+                                            }, void 0, false, {
+                                                fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
+                                                lineNumber: 235,
+                                                columnNumber: 17
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                className: "text-xs text-red-600 text-center mt-2",
+                                                children: "Lightning invoices automatically expire for security reasons. Create a new donation to get a fresh invoice."
+                                            }, void 0, false, {
+                                                fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
+                                                lineNumber: 238,
+                                                columnNumber: 17
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
+                                        lineNumber: 234,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                        onClick: onBack,
+                                        variant: "outline",
+                                        className: "w-full border-red-200 text-red-700 hover:bg-red-50",
+                                        children: "Create New Donation"
                                     }, void 0, false, {
                                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                        lineNumber: 209,
+                                        lineNumber: 243,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                                lineNumber: 204,
+                                lineNumber: 229,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                        lineNumber: 182,
+                        lineNumber: 207,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                lineNumber: 96,
+                lineNumber: 108,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardFooter"], {
@@ -1467,31 +1502,31 @@ function InvoiceQR({ invoice, onPaymentSuccess, onBack }) {
                             children: "🔒 Secure Lightning Network payment"
                         }, void 0, false, {
                             fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                            lineNumber: 219,
+                            lineNumber: 257,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$SatsForGood$2f$SatsForGood$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             children: "💡 Compatible with all Lightning wallets"
                         }, void 0, false, {
                             fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                            lineNumber: 220,
+                            lineNumber: 258,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                    lineNumber: 218,
+                    lineNumber: 256,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-                lineNumber: 217,
+                lineNumber: 255,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Documents/SatsForGood/SatsForGood/src/components/invoice-qr.tsx",
-        lineNumber: 81,
+        lineNumber: 93,
         columnNumber: 5
     }, this);
 }

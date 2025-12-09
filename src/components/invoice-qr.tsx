@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { getInvoiceStatus, confirmPayment } from "@/lib/api";
+import { getInvoiceStatus } from "@/lib/api";
 import type { Invoice, InvoiceStatus } from "@/lib/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,14 +47,26 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
   }, [invoice.payment_hash, onPaymentSuccess, isPolling]);
 
   useEffect(() => {
-    if (timeRemaining <= 0) return;
+    if (timeRemaining <= 0) {
+      // Auto-expire when countdown reaches zero
+      if (status === "PENDING") {
+        setStatus("EXPIRED");
+        setIsPolling(false);
+        toast({
+          title: "Invoice Expired",
+          description: "This donation invoice has expired. Please create a new one.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
     
     const timer = setInterval(() => {
       setTimeRemaining(prev => Math.max(0, prev - 1));
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [timeRemaining]);
+  }, [timeRemaining, status, toast]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -86,7 +98,7 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
       <CardHeader>
         <CardTitle className="text-center font-headline flex items-center justify-center gap-2">
             <Zap className="h-6 w-6 text-primary" />
-            Scan QR Code to Donate
+            Lightning Donation
         </CardTitle>
         <p className="text-center text-sm text-muted-foreground">
           Use your Lightning wallet to scan this QR code and complete the donation
@@ -129,10 +141,19 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
 
         {/* Time Remaining */}
         {status === "PENDING" && (
-          <div className="flex items-center gap-2 text-amber-600">
+          <div className={`flex items-center gap-2 ${
+            timeRemaining <= 300 ? 'text-red-600' : // Last 5 minutes
+            timeRemaining <= 900 ? 'text-amber-600' : // Last 15 minutes
+            'text-green-600'
+          }`}>
             <Clock className="h-4 w-4" />
             <span className="text-sm font-medium">
               Expires in {formatTime(timeRemaining)}
+              {timeRemaining <= 300 && (
+                <span className="block text-xs mt-1 animate-pulse">
+                  ⚠️ Hurry! Time running out
+                </span>
+              )}
             </span>
           </div>
         )}
@@ -140,10 +161,14 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
         {/* Mobile Payment Instructions */}
         <div className="w-full space-y-3">
           <h3 className="text-sm font-semibold text-center">How to Pay</h3>
+          
           <div className="text-center text-sm text-muted-foreground space-y-2">
             <p>1. Open your Lightning wallet app</p>
-            <p>2. Scan this QR code or copy the invoice</p>
-            <p>3. Confirm the payment</p>
+            <p>2. Scan this QR code or copy the invoice below</p>
+            <p>3. Confirm the payment in your wallet</p>
+            <p className="text-xs text-muted-foreground mt-3">
+              Payment will be detected automatically once confirmed on the Lightning Network
+            </p>
           </div>
           
           {/* Direct Open Button for Mobile */}
@@ -183,8 +208,8 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
           {status === "PENDING" && (
             <div className="flex items-center justify-center gap-2 text-primary">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span className="font-semibold">Waiting for payment...</span>
-              <span className="text-sm text-muted-foreground">(Check your wallet)</span>
+              <span className="font-semibold">Waiting for Lightning payment...</span>
+              <span className="text-sm text-muted-foreground">(Scan QR code with your wallet)</span>
             </div>
           )}
           
@@ -201,14 +226,27 @@ export function InvoiceQR({ invoice, onPaymentSuccess, onBack }: InvoiceQRProps)
           )}
 
           {status === "EXPIRED" && (
-            <div className="space-y-2">
+            <div className="space-y-4">
               <div className="flex items-center justify-center gap-2 text-red-500">
                 <Clock className="h-5 w-5" />
                 <span className="font-semibold">Invoice Expired</span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Please create a new donation invoice.
-              </p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-700 text-center">
+                  ⏰ This Lightning invoice has expired and can no longer be paid.
+                </p>
+                <p className="text-xs text-red-600 text-center mt-2">
+                  Lightning invoices automatically expire for security reasons.
+                  Create a new donation to get a fresh invoice.
+                </p>
+              </div>
+              <Button
+                onClick={onBack}
+                variant="outline"
+                className="w-full border-red-200 text-red-700 hover:bg-red-50"
+              >
+                Create New Donation
+              </Button>
             </div>
           )}
         </div>

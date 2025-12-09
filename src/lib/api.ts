@@ -100,29 +100,6 @@ export async function getDonationReceipt(payment_hash: string) {
   return response.json();
 }
 
-// Manual payment confirmation for demo/testing purposes
-export async function confirmPayment(payment_hash: string): Promise<InvoiceStatus> {
-  try {
-    const response = await fetch(`${RUST_BACKEND_URL}/confirm-payment?payment_hash=${encodeURIComponent(payment_hash)}`);
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        status: data.status,
-        paid_at: data.paid_at,
-      };
-    }
-  } catch (error) {
-    // Fallback: if confirm-payment endpoint doesn't exist, simulate payment
-    console.log('Confirm payment endpoint not available, simulating payment confirmation');
-  }
-  
-  // Simulate successful payment confirmation for demo purposes
-  return {
-    status: "PAID",
-    paid_at: new Date().toISOString(),
-  };
-}
-
 export interface DonationReceipt {
   id: string;
   donor_name: string;
